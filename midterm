@@ -1,0 +1,162 @@
+echo "# math244" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/frankruivo/math244.git
+git push -u origin main
+a=csvread('Essex cases.csv');
+t1 = datetime(2020,03,14);
+t2 = datetime(2020,10,22);
+months = t1:t2;
+
+c=a(:,1);
+d=a(:,2);
+
+diffc=diff(c);
+diffd=diff(d);
+
+figure(1)
+subplot(2,1,1)
+title('Cases/Deaths vs Time')
+plot(months,diffc,'r')
+datetick('x','keepticks','keeplimits')
+title('Cases vs Time')
+xlabel('Time')
+ylabel('Cases')
+subplot(2,1,2)
+
+plot(months,diffd,'r')
+datetick('x','keepticks','keeplimits')
+title('Deaths vs Time')
+xlabel('Time')
+ylabel('Deaths')
+
+[t,x] = ode45(@f,[0 25],[800000 7 0 0]);
+[t1,y] = ode45(@g,[0 25],[800000 7 0 0]);
+[t2,w] = ode45(@h,[0 25],[800000 7 0 0]);
+[t3,z] = ode45(@i,[0 25],[800000 7 0 0]);
+
+figure(2)
+plot(t, x(:,1));
+hold on
+plot(t, x(:,2));
+hold on
+plot(t, x(:,3));
+hold on
+plot(t, x(:,4));
+title('Covid-19 alpha=.3 mu=.1 beta=.015')
+xlabel('Days')
+ylabel('Population')
+legend('Susceptible','Infected','Recovered','Deaths')
+ 
+
+figure (3)
+hold on
+title('Deaths vs Time')
+plot(diffd)
+xlabel('Time')
+ylabel('Deaths')
+hold on
+plot(t,x(:,4))
+plot(t1,y(:,4))
+plot(t2,w(:,4))
+plot(t3,z(:,4))
+
+legend('Data','alpha=.3 mu=.1 beta=.015','alpha=.29 mu=.1 beta=.015','alpha=.29 mu=.1 beta=.02','alpha=.29 mu=.1 beta=.015')
+
+
+
+figure (4)
+hold on
+title('Cases vs Time')
+plot(diffc)
+xlabel('Time')
+ylabel('Cases')
+hold on
+
+plot(t,x(:,2))
+plot(t1,y(:,2))
+plot(t2,w(:,2))
+plot(t3,z(:,2))
+xlabel('Days')
+ylabel('Cases')
+legend('Data','alpha=.3 mu=.1 beta=.015','alpha=.29 mu=.1 beta=.015','alpha=.29 mu=.1 beta=.02','alpha=.29 mu=.1 beta=.015')
+
+
+figure(5)
+plot(t1, y(:,1));
+hold on
+plot(t1, y(:,2));
+hold on
+plot(t1, y(:,3));
+hold on
+plot(t1, y(:,4));
+title('Covid-19 alpha=.29 mu=.1 beta=.015')
+xlabel('Days')
+ylabel('Population')
+legend('Susceptible','Infected','Recovered','Deaths')
+
+figure(6)
+plot(t2, w(:,1));
+hold on
+plot(t2, w(:,2));
+hold on
+plot(t2, w(:,3));
+hold on
+plot(t2, w(:,4));
+title('Covid-19 alpha=.29 mu=.1 beta=.02')
+xlabel('Days')
+ylabel('Population')
+legend('Susceptible','Infected','Recovered','Deaths')
+figure(2)
+
+figure(7)
+plot(t3, z(:,1));
+hold on
+plot(t3, z(:,2));
+hold on
+plot(t3, z(:,3));
+hold on
+plot(t3, z(:,4));
+title('Covid-19 alpha=.29 mu=.1 beta=.015')
+xlabel('Days')
+ylabel('Population')
+legend('Susceptible','Infected','Recovered','Deaths')
+
+
+
+
+function xdot = f(t,x)
+b = .3; % probability of contracting the disease
+g = 0.1; % recovery rate
+u=.015; %death rate
+N=x(1)+x(2)+x(3)-x(4);
+xdot=[(-b*x(2)*x(1))/N; (b*x(2)*x(1)/N)-g*x(2)-u*x(2); g*x(2);u*x(2)];
+
+end 
+
+function xdot1 = g(t1,y)
+b = .29; % probability of contracting the disease
+g = 0.2; % recovery rate
+u=.015; %death rate
+N=y(1)+y(2)+y(3)-y(4);
+xdot1=[(-b*y(2)*y(1)/N); (b*y(2)*y(1)/N)-g*y(2)-u*y(2); g*y(2);u*y(2)];
+
+end 
+function xdot2 = h(t2,w)
+b = .29; % probability of contracting the disease
+g = 0.1; % recovery rate
+u=.02; %death rate
+N=w(1)+w(2)+w(3)-w(4);
+xdot2=[(-b*w(2)*w(1)/N); (b*w(2)*w(1)/N)-g*w(2)-u*w(2); g*w(2);u*w(2)];
+
+end 
+function xdot3 = i(t3,z)
+b = .29; % probability of contracting the disease
+g = 0.1; % recovery rate
+u=.015; %death rate
+N=z(1)+z(2)+z(3)-z(4);
+xdot3=[(-b*z(2)*z(1)/N); (b*z(2)*z(1)/N)-g*z(2)-u*z(2); g*z(2);u*z(2)];
+
+end 
